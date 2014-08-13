@@ -1,0 +1,15 @@
+[submodule "vendor/src/github.com/gorilla/mux"]
+	path = vendor/src/github.com/gorilla/mux
+	url = git://github.com/gorilla/mux
+[submodule "vendor/src/github.com/cespare/go-apachelog"]
+	path = vendor/src/github.com/cespare/go-apachelog
+	url = git://github.com/cespare/go-apachelog
+[submodule "vendor/src/github.com/jigish/go-flags"]
+	path = vendor/src/github.com/jigish/go-flags
+	url = git://github.com/jigish/go-flags
+[submodule "lib/atlantis-router"]
+	path = lib/atlantis-router
+	url = git://github.com/ooyala/atlantis-router
+[submodule "vendor/src/github.com/gorilla/context"]
+	path = vendor/src/github.com/gorilla/context
+	url = git://github.com/gorilla/context
