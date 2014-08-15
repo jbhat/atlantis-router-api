@@ -9,7 +9,7 @@ import (
 
 func ListTries() ([]string, error){
 	
-	return routerzk.ListTries(zkConn)
+	return routerzk.ListTries(zkConn.Conn)
 }
 
 func GetTrie(name string) (cfg.Trie, error){
@@ -17,7 +17,7 @@ func GetTrie(name string) (cfg.Trie, error){
 		return cfg.Trie{}, errors.New("Please specify a name")
 	}
 	
-	return routerzk.GetTrie(zkConn, name)
+	return routerzk.GetTrie(zkConn.Conn, name)
 }
 
 func SetTrie(trie cfg.Trie) error {
@@ -28,7 +28,7 @@ func SetTrie(trie cfg.Trie) error {
 		return errors.New("Please specify a rule")
 	}
 
-	return routerzk.SetTrie(zkConn, trie)
+	return routerzk.SetTrie(zkConn.Conn, trie)
 }
 
 
@@ -37,5 +37,5 @@ func DeleteTrie(name string) error {
 		return errors.New("Please specify a name")
 	}
 
-	return routerzk.DelTrie(zkConn, name)
+	return routerzk.DelTrie(zkConn.Conn, name)
 }

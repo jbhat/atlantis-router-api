@@ -9,7 +9,7 @@ import (
 
 func ListPools() ([]string, error){
 	
-	return routerzk.ListPools(zkConn)
+	return routerzk.ListPools(zkConn.Conn)
 }
 
 func GetPool(name string) (cfg.Pool, error){
@@ -17,7 +17,7 @@ func GetPool(name string) (cfg.Pool, error){
 		return cfg.Pool{}, errors.New("Please specify a name")
 	}
 	
-	return routerzk.GetPool(zkConn, name)
+	return routerzk.GetPool(zkConn.Conn, name)
 }
 
 func SetPool(pool cfg.Pool) error {
@@ -33,7 +33,7 @@ func SetPool(pool cfg.Pool) error {
         } // no need to check hosts. an empty pool is still a valid pool
 
 
-	return routerzk.SetPool(zkConn, pool)
+	return routerzk.SetPool(zkConn.Conn, pool)
 }
 
 
@@ -42,5 +42,5 @@ func DeletePool(name string) error {
 		return errors.New("Please specify a name")
 	}
 
-	return routerzk.DelPool(zkConn, name)
+	return routerzk.DelPool(zkConn.Conn, name)
 }

@@ -24,8 +24,8 @@ func ListTries(w http.ResponseWriter, r *http.Request) {
 		WriteResponse(w, ServerErrorCode, GetErrorStatusJson(CouldNotCompleteOperationStatus, err))
 		return
 	}
-
 	var tMap map[string][]string
+	tMap = make(map[string][]string)
 	tMap["Tries"] = tries
 	
 	tJson, err := json.Marshal(tMap)

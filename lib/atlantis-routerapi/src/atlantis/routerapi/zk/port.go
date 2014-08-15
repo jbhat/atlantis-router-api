@@ -10,7 +10,7 @@ import (
 
 func ListPorts() ([]uint16, error){
 	
-	return routerzk.ListPorts(zkConn)
+	return routerzk.ListPorts(zkConn.Conn)
 }
 
 func GetPort(name string) (cfg.Port, error){
@@ -24,7 +24,7 @@ func GetPort(name string) (cfg.Port, error){
 		return cfg.Port{}, err
 	}	
 	
-	return routerzk.GetPort(zkConn, uint16(pUint))
+	return routerzk.GetPort(zkConn.Conn, uint16(pUint))
 }
 
 func SetPort(port cfg.Port) error {
@@ -35,7 +35,7 @@ func SetPort(port cfg.Port) error {
 		return errors.New("Please specify a trie")
 	}
 
-	return routerzk.SetPort(zkConn, port)
+	return routerzk.SetPort(zkConn.Conn, port)
 }
 
 
@@ -50,5 +50,5 @@ func DeletePort(name string) error {
 		return err
 	}
 
-	return routerzk.DelPort(zkConn, uint16(pUint))
+	return routerzk.DelPort(zkConn.Conn, uint16(pUint))
 }

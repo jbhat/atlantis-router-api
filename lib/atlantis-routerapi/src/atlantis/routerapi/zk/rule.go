@@ -9,7 +9,7 @@ import (
 
 func ListRules() ([]string, error){
 	
-	return routerzk.ListRules(zkConn)
+	return routerzk.ListRules(zkConn.Conn)
 }
 
 func GetRule(name string) (cfg.Rule, error){
@@ -17,7 +17,7 @@ func GetRule(name string) (cfg.Rule, error){
 		return cfg.Rule{}, errors.New("Please specify a name")
 	}
 	
-	return routerzk.GetRule(zkConn, name)
+	return routerzk.GetRule(zkConn.Conn, name)
 }
 
 func SetRule(rule cfg.Rule) error {
@@ -34,7 +34,7 @@ func SetRule(rule cfg.Rule) error {
 		return errors.New("Please specify a pool")
 	}
 
-	return routerzk.SetRule(zkConn, rule)
+	return routerzk.SetRule(zkConn.Conn, rule)
 }
 
 
@@ -43,5 +43,5 @@ func DeleteRule(name string) error {
 		return errors.New("Please specify a name")
 	}
 
-	return routerzk.DelRule(zkConn, name)
+	return routerzk.DelRule(zkConn.Conn, name)
 }

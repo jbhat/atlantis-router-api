@@ -25,6 +25,7 @@ func ListPorts(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var pMap map[string][]uint16
+	pMap = make(map[string][]uint16)
 	pMap["Ports"] = ports		
 	
 	pJson, err := json.Marshal(pMap)

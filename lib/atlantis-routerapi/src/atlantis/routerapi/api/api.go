@@ -101,7 +101,7 @@ func Init(listenAddr string) error{
 	gmux.HandleFunc("/ports/{Port}", DeletePort).Methods("DELETE")
 
 	handler := apachelog.NewHandler(HandlerFunc(gmux), os.Stderr)
-	server = &http.Server{Addr: listenAddr, Handler: handler}
+	server = &http.Server{Addr: "0.0.0.0:" + listenAddr, Handler: handler}
 	lAddr = listenAddr
 	return nil
 
@@ -110,7 +110,9 @@ func Init(listenAddr string) error{
 func Listen() {
 
 	if server == nil {
+		log.Fatal("NOT INITIALIZED")
 		panic("Not Initialized.")
 	}
 	log.Println("[API] Listening on", lAddr)
+	log.Println(server.ListenAndServe())
 }

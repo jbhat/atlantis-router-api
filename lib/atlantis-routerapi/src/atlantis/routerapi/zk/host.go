@@ -13,7 +13,7 @@ func GetHosts(poolName string) (map[string]cfg.Host, error) {
 		return nil, errors.New("Please specify a pool name to get the hosts from")
 	}
 
-	return routerzk.GetHosts(zkConn, poolName)
+	return routerzk.GetHosts(zkConn.Conn, poolName)
 
 }
 
@@ -25,7 +25,7 @@ func AddHosts(poolName string, hosts map[string]cfg.Host) error {
 		return errors.New("Please specify at least one host to add to the pool")
 	}
 
-	return routerzk.AddHosts(zkConn, poolName, hosts)
+	return routerzk.AddHosts(zkConn.Conn, poolName, hosts)
 }
 
 func DeleteHosts(poolName string, hosts []string) error {
@@ -36,5 +36,5 @@ func DeleteHosts(poolName string, hosts []string) error {
 		return errors.New("Please specifiy at least one host to delete from the pool")
 	}
 
-	return routerzk.DelHosts(zkConn, poolName, hosts)	
+	return routerzk.DelHosts(zkConn.Conn, poolName, hosts)	
 }

@@ -26,6 +26,7 @@ func ListRules(w http.ResponseWriter, r *http.Request) {
 	}
 		
 	var rMap map[string][]string
+	rMap = make(map[string][]string)
 	rMap["Rules"] = rules
 
 	rJson, err := json.Marshal(rMap)

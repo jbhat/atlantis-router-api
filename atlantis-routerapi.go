@@ -13,11 +13,13 @@ type RouterApi struct {
 	opts 	*RouterApiOptions
 	APIListenAddress	string
 	ZkServerAddress		string
+	ZkNeedConfig		bool
 }
 
 type RouterApiOptions struct {
 	APIListenAddress	string `short:"A" long:"listen-address" description:"The address for the API to listen on"`
 	ZkServerAddress		string `short:"Z" long:"zk-address" description:"The address of the ZK server"`
+	InitZK			string `short:"I" long:"init-zk" description:"Initialize zk?"`
 }
 
 func NewRouterApi() *RouterApi {
@@ -38,6 +40,9 @@ func (rapi *RouterApi) loadConfig(){
 	} else {
 		rapi.ZkServerAddress = "28080"
 	}
+	if rapi.opts.InitZK == "y" {
+		rapi.ZkNeedConfig = true
+	}
 }
 
 func main() {
@@ -50,6 +55,9 @@ func main() {
 func (rapi *RouterApi) run() {
 
 	api.Init(rapi.APIListenAddress)
-	zk.Init(rapi.ZkServerAddress)
+	zk.Init(rapi.ZkServerAddress, rapi.ZkNeedConfig)
+
+	api.Listen()
 
 }
+
