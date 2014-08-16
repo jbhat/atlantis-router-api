@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"errors"
+	"encoding/json"
 )
 
 
@@ -14,6 +15,7 @@ var (
 	APIAddress	string
 	User		string
 	Secret		string	
+	PrettyJson 	bool
 )
 
 
@@ -47,6 +49,7 @@ type ClientOpts struct {
 	Address string	`short:"A" long:"addr" description:"The API's address, if just a port number will be used with 0.0.0.0"`
 	User	string  `short:"U" long:"user" description:"Username"`
 	Secret	string	`short:"S" long:"secret" description:"Secret"`
+	PrettyJson bool `short:"J" long:"pretty-json" description:"Print the returned JSON with indents"`
 }
 
 type ApiClient struct {
@@ -96,11 +99,12 @@ func overlayConfig() error{
 
 	if clientOpts.Address != "" {
 		if strings.Contains(clientOpts.Address, ":"){
-	
-               		 APIAddress = "0.0.0.0:" + clientOpts.Address 
-		} else{
                		 APIAddress =	clientOpts.Address 
-       		}	
+	
+       		} else {
+
+			APIAddress = "http://0.0.0.0:" + clientOpts.Address 
+		}	
 	}
 
 	if clientOpts.User != "" {
@@ -109,6 +113,10 @@ func overlayConfig() error{
 
 	if clientOpts.Secret != "" {
 		Secret = clientOpts.Secret
+	}
+
+	if clientOpts.PrettyJson {
+		PrettyJson = true
 	}
 
 	return nil
@@ -125,7 +133,22 @@ func Output(status int, data string){
 
 	fmt.Printf("Status Code: %d\n\n", status)
 
-	fmt.Printf("Data: \n%s", data)	
+	if PrettyJson{
+		var m map[string]interface{}
+		err := json.Unmarshal([]byte(data), &m)
+		if err != nil {
+			ErrorPrint(err)	
+		}
 	
+		b, err := json.MarshalIndent(m, "", "  ")
+		if err != nil {
+			ErrorPrint(err)
+		}
+		
+		fmt.Printf("Data: \n%s\n\n", string(b))
+	
+	} else {
+		fmt.Printf("Data: \n%s\n\n", data)	
+	}	
 
 }

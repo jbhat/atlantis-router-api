@@ -21,6 +21,14 @@ func (c *ListPoolCommand) Execute(args []string) error {
 	}
 
 	Output(statusCode, data)
+
+	if c.Info && statusCode == 200 {
+		err = ExpandAndPrintData("/pools/", "Pools", data)
+		if err != nil {
+			ErrorPrint(err)
+		} 	
+	}
+	
 	return nil
 }
 

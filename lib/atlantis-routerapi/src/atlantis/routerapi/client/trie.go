@@ -21,6 +21,14 @@ func (c *ListTrieCommand) Execute(args []string) error {
 	}
 
 	Output(statusCode, data)
+
+	if c.Info && statusCode == 200 {
+		err = ExpandAndPrintData("/tries/", "Tries", data)
+		if err != nil {
+			ErrorPrint(err)
+		}	
+	}
+
 	return nil
 }
 

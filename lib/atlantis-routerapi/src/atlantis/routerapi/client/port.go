@@ -24,6 +24,16 @@ func (c *ListPortCommand) Execute(args []string) error {
 	}
 
 	Output(statusCode, data)
+
+	//if the info flag is set, go through and get the data for each port in
+	//the list and print it's data
+	if c.Info && statusCode == 200  {
+		err = ExpandAndPrintData("/ports/", "Ports", data)
+		if err != nil {
+			ErrorPrint(err)
+		}
+	}
+
 	return nil
 
 }

@@ -29,7 +29,7 @@ fmt:
 
 allc: buildc
 
-buildc: init
+buildc: 
 	go build -o bin/$(PROJ_CLIENT_NAME) $(PROJ_CLIENT_NAME).go
 
 fmtc:	

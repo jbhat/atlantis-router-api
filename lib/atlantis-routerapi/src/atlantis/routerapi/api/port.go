@@ -47,14 +47,14 @@ func GetPort(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	 
-	port, err := zk.GetPort(vars["PortName"])
+	port, err := zk.GetPort(vars["Port"])
 	if err != nil {
 		WriteResponse(w, ServerErrorCode, GetErrorStatusJson(CouldNotCompleteOperationStatus, err))
 		return
 	}
 	
 	if port.Port == 0 {
-		WriteResponse(w, NotFoundStatusCode, GetStatusJson(ResourceDoesNotExistStatus + ": " + vars["PortName"]))
+		WriteResponse(w, NotFoundStatusCode, GetStatusJson(ResourceDoesNotExistStatus + ": " + vars["Port"]))
 		return
 	}
 
@@ -113,7 +113,7 @@ func DeletePort(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	err = zk.DeletePort(vars["PortName"])	
+	err = zk.DeletePort(vars["Port"])	
 	if err != nil {
 		WriteResponse(w, ServerErrorCode, GetErrorStatusJson(CouldNotCompleteOperationStatus, err))
 		return

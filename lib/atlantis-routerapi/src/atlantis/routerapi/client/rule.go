@@ -21,6 +21,14 @@ func (c *ListRuleCommand) Execute(args []string) error {
 	}
 
 	Output(statusCode, data)
+	
+	if c.Info && statusCode == 200 {
+		
+		err = ExpandAndPrintData("/rules/", "Rules", data)
+		if err != nil {
+			ErrorPrint(err)
+		}
+	}
 	return nil
 }
 

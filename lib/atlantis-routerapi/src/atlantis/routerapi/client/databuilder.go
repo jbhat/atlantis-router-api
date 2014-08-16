@@ -5,6 +5,7 @@ import (
 	"errors"
 	cfg "atlantis/router/config"
 	"encoding/json"
+	"fmt"
 )
 
 
@@ -126,4 +127,24 @@ func (c *AddPortCommand) GetPortJson() (string, error) {
 	}
 
 	return string(b), nil
+}
+
+func ExpandAndPrintData(uri, jName, jListData string) error{
+
+	var m map[string][]interface{}
+	err := json.Unmarshal([]byte(jListData), &m)
+	if err != nil {
+		return err
+	}
+
+	vList := m[jName]
+	for _, value := range vList {
+		instatusCode, indata, err := BuildAndSendRequest("GET", fmt.Sprintf("%s%v", uri, value), "")
+		if err != nil {
+			return err
+		}
+
+		Output(instatusCode, indata)	
+	}
+	return nil
 }
