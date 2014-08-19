@@ -198,9 +198,9 @@ Some of the API Methods are shown to return a JSON field "Status". This field is
 ``` json
 {
 	"Hosts":[
-    	{"Address": "host1Addr"},
-        {"Address": "host2Addr"},
-        {"Address": "host3Addr"}
+			"Host1",
+            "Host2",
+            "Host3"
     ]
 }
 ```

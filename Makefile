@@ -21,9 +21,6 @@ init: clean
 build: init
 	go build -o bin/$(PROJECT_NAME) $(PROJECT_NAME).go
 
-test:
-	echo "I don't normally test my code, but when I do, I do it on production."
-
 fmt:
 	gofmt -l -w $(PROJECT_NAME).go
 
@@ -35,3 +32,10 @@ buildc:
 fmtc:	
 	gofmt -l -w $(PROJ_CLIENT_NAME).go
 
+test:
+	@for p in `find $(API_PATH)/src -type f -name "*.go" |sed 's-\./src/\(.*\)/.*-\1-' |sort -u`; do \
+		echo "Testing $$p..."; \
+		go test $$p -cover -v || exit 1; \
+	done
+	@echo
+	echo "ok."

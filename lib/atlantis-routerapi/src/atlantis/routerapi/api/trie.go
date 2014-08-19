@@ -3,6 +3,8 @@ package api
 
 
 import (
+	"fmt"
+	"strings"
 	"net/http"
 	"encoding/json"
 	"github.com/gorilla/mux"
@@ -49,15 +51,16 @@ func GetTrie(w http.ResponseWriter, r *http.Request) {
 
 	trie, err := zk.GetTrie(vars["TrieName"])
 	if err != nil {
-		WriteResponse(w, ServerErrorCode, GetErrorStatusJson(CouldNotCompleteOperationStatus, err))
+		//check if it was just a simple no node error
+		if !strings.Contains(fmt.Sprintf("%s", err), "no node") {
+			WriteResponse(w, ServerErrorCode, GetErrorStatusJson(CouldNotCompleteOperationStatus, err))
+		} else {
+			WriteResponse(w, NotFoundStatusCode, GetStatusJson(ResourceDoesNotExistStatus + ": " + vars["TrieName"]))
+		}
+
 		return
 	}
 	
-	if trie.Name == "" {
-		WriteResponse(w, NotFoundStatusCode, GetStatusJson(ResourceDoesNotExistStatus + ": " + vars["TrieName"]))
-		return
-	} 
-
 	tJson, err := json.Marshal(trie)
 	if err != nil {
 		WriteResponse(w, ServerErrorCode, GetErrorStatusJson(CouldNotCompleteOperationStatus, err))

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"encoding/json"
 	"github.com/gorilla/mux"
@@ -56,6 +57,7 @@ func AddHosts(w http.ResponseWriter, r *http.Request) {
 	}
 	err = json.Unmarshal(body, &hostMap)		
 	if err != nil {
+		fmt.Printf("Error: %s\n", err)
 		WriteResponse(w, BadRequestStatusCode, GetErrorStatusJson(CouldNotReadRequestDataStatus, err))	
 		return
 	}
@@ -85,20 +87,18 @@ func DeleteHosts(w http.ResponseWriter, r *http.Request) {
 	}
 
 	m, err := GetMapFromReqJson(r) 
-
 	if err != nil {
+		fmt.Printf("Error: %s\n", err)
 		WriteResponse(w, BadRequestStatusCode, GetErrorStatusJson(CouldNotReadRequestDataStatus, err))
                 return
 	}
 	
-	var hostList []string	
 	hList := m["Hosts"]
 	fList := hList.([]interface{})
-
+	hostList := make([]string, len(fList))
 	//parse the standard host req format to adjust for rw.go format
 	for key, value := range fList {
-		temp := value.(map[string]string)
-		hostList[key] = temp["Address"]	   
+		hostList[key] = value.(string)
 	}
 
 	err = zk.DeleteHosts(vars["PoolName"], hostList)

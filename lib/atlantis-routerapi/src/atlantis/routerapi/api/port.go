@@ -3,6 +3,8 @@ package api
 
 
 import (
+	"fmt"
+	"strings"
 	"net/http"
 	"encoding/json"
 	"github.com/gorilla/mux"
@@ -49,12 +51,12 @@ func GetPort(w http.ResponseWriter, r *http.Request) {
 	 
 	port, err := zk.GetPort(vars["Port"])
 	if err != nil {
-		WriteResponse(w, ServerErrorCode, GetErrorStatusJson(CouldNotCompleteOperationStatus, err))
-		return
-	}
+		if !strings.Contains(fmt.Sprintf("%s", err), "no node") {
+			WriteResponse(w, ServerErrorCode, GetErrorStatusJson(CouldNotCompleteOperationStatus, err))
+		} else {
+			WriteResponse(w, NotFoundStatusCode, GetStatusJson(ResourceDoesNotExistStatus + ": " + vars["Port"]))
+		}
 	
-	if port.Port == 0 {
-		WriteResponse(w, NotFoundStatusCode, GetStatusJson(ResourceDoesNotExistStatus + ": " + vars["Port"]))
 		return
 	}
 

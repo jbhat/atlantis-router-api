@@ -27,6 +27,13 @@ func NewRouterApi() *RouterApi {
 	return &RouterApi{Parser: flags.NewParser(opts, flags.Default), opts: opts}
 }
 
+func (rapi *RouterApi) setConfig(options RouterApiOptions) {
+
+	rapi.APIListenAddress = options.APIListenAddress
+	rapi.ZkServerAddress = options.ZkServerAddress
+	rapi.ZkNeedConifg = options.InitZk
+
+}
 func (rapi *RouterApi) loadConfig(){
 	rapi.Parse()
 

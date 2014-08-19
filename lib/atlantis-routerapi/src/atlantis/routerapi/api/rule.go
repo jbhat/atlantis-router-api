@@ -3,6 +3,8 @@ package api
 
 
 import (
+	"fmt"
+	"strings"
 	"net/http"
 	"encoding/json"
 	"github.com/gorilla/mux"
@@ -49,15 +51,16 @@ func GetRule(w http.ResponseWriter, r *http.Request) {
 
 	rule, err := zk.GetRule(vars["RuleName"])
 	if err != nil {
-		WriteResponse(w, ServerErrorCode, GetErrorStatusJson(CouldNotCompleteOperationStatus, err))
+		//check if the error was a simple no node error
+		if !strings.Contains(fmt.Sprintf("%s", err), "no node"){
+			WriteResponse(w, ServerErrorCode, GetErrorStatusJson(CouldNotCompleteOperationStatus, err))
+		} else {
+			WriteResponse(w, NotFoundStatusCode, GetStatusJson(ResourceDoesNotExistStatus + ": " + vars["RuleName"]))
+		}
+	
 		return
 	}
 	
-	if rule.Name == "" {
-		WriteResponse(w, NotFoundStatusCode, GetStatusJson(ResourceDoesNotExistStatus + ": " + vars["RuleName"]))
-		return
-	}
-
 	rJson, err := json.Marshal(rule)
 	if err != nil {
 		WriteResponse(w, ServerErrorCode, GetErrorStatusJson(CouldNotCompleteOperationStatus, err))

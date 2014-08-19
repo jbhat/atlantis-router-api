@@ -26,8 +26,9 @@ func (c *AddPoolCommand) BuildPool() (cfg.Pool, error) {
 	}
 	
 	hMap := make(map[string]cfg.Host, len(c.Hosts)) 
-	for _, value := range c.Hosts {
-		hMap[c.Name] =	cfg.Host{value} 
+	for key, value := range c.Hosts {
+		fmt.Printf("myval: %v : %v\n", key, value) 
+		hMap[value] =	cfg.Host{value} 
 	}
 	return cfg.Pool{c.Name,
 			false,

@@ -3,7 +3,6 @@ package client
 
 import (
 	"io"
-	"fmt"
 	"io/ioutil"
 	"strings"
 	"net/http"
@@ -22,7 +21,6 @@ func BuildRequest(method, uri, data string) (*http.Request, error){
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("[debug] URL: %s\n", APIAddress + uri)
 	//User and Secret are set in client.go
 	req.Header.Add("User", User)
 	req.Header.Add("Secret", Secret)

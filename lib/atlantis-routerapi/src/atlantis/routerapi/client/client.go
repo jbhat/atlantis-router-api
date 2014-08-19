@@ -18,6 +18,21 @@ var (
 	PrettyJson 	bool
 )
 
+func SetDefaults(addr, user, secret string){
+
+	if addr != "" {
+		APIAddress = addr
+	}
+
+	if user != "" {
+		User = user
+	}
+
+	if secret != "" {
+		Secret = secret
+	}
+
+}
 
 
 func Init() error{
