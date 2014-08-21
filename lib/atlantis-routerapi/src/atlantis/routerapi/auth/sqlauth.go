@@ -17,6 +17,10 @@ func (*SqlAuth) IsSuperUser(user, secret string) error {
 
 	return nil
 }
+	
+func (s *SqlAuth) AuthOk() bool {
+	return true
+}
 
 func GetSqlAuthorizer() *SqlAuth {
 

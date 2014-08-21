@@ -55,6 +55,7 @@ func Init(listenAddr string) error{
 	gmux := mux.NewRouter()
 	
 	gmux.NotFoundHandler = http.HandlerFunc(NotFound)
+	gmux.HandleFunc("/healthz", Healthz).Methods("GET")
 
 	/*	
 	//router management

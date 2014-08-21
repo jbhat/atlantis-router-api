@@ -31,7 +31,7 @@ func (rapi *RouterApi) setConfig(options RouterApiOptions) {
 
 	rapi.APIListenAddress = options.APIListenAddress
 	rapi.ZkServerAddress = options.ZkServerAddress
-	rapi.ZkNeedConifg = options.InitZk
+	rapi.ZkNeedConfig = (options.InitZK != "")
 
 }
 func (rapi *RouterApi) loadConfig(){

@@ -2,18 +2,17 @@ package api
 
 import (
 	"testing"
-	"time"
-	"os/exec"
 	"atlantis/routerapi/client"
 	"atlantis/routerapi/api"
 	"atlantis/routerapi/zk"
+	zktest "atlantis/routerapi/zk/testutils"
 	"encoding/json"
 	cfg "atlantis/router/config"
 )
 
 const (
 	DefaultAPIAddr = "8081"
-	DefaultZkPort = "0.0.0.0:2181"
+	DefaultZkPort = 2181
 	DefaultUser = "kwilson"
 	DefaultSecret = "pass"
 )
@@ -42,23 +41,33 @@ func testTrieData() string {
 
 }
 
+var zkServer *zktest.ZkTestServer
+
 func TestSetup(t *testing.T){
 
-	//Start ZK server, must be using 2181 client port
-	cmd := exec.Command("zkServer", "start")
-	err := cmd.Run()
-	if err != nil {
+	//create/start zkserver
+	zkServer = zktest.NewZkTestServer(DefaultZkPort)
+	if err := zkServer.Init(); err != nil {
 		t.Fatalf("could not start zkServer for testing")
 	}
+
+	tmpAddr, err := zkServer.Server.Addr()
+	if err != nil {
+		t.Fatalf("could not get zk server addr")
+	}
+	
+	//set our conn to the one created by testserver instead
+	//of making a new one with zk.Init
+	zk.SetZkConn(zkServer.Zk.Conn, zkServer.ZkEventChan, tmpAddr)
+
+
 
 	//configure and start the api
 	err = api.Init(DefaultAPIAddr)
 	if err != nil {
 		t.Fatalf("failed")
 	}
-	zk.Init(DefaultZkPort, false)	
-	//give the zk server time to start
-	time.Sleep(100 * time.Millisecond)
+
 	go api.Listen()
 
 	client.SetDefaults("http://0.0.0.0:" + DefaultAPIAddr, DefaultUser, DefaultSecret)
@@ -165,14 +174,8 @@ func TestDeleteTrie(t *testing.T){
 
 func TestTearDown(t *testing.T){
 
-
-	
-
-	//stop zkServer
-	cmd := exec.Command("zkServer", "stop")
-	err := cmd.Run()
-	if err != nil {
-		t.Fatalf("could not tear down zookeeper")
+	zk.KillConnection()
+	if err := zkServer.Destroy(); err != nil {
+		t.Fatalf("could not destory zk server")
 	}
-
 }

@@ -19,6 +19,8 @@ import (
 	"time"
 )
 
+var lastEvent zookeeper.Event
+
 type ZkConn struct {
 	sync.Mutex
 	ResetCh chan bool
@@ -43,6 +45,12 @@ func ManagedZkConn(servers string) *ZkConn {
 func (z *ZkConn) Shutdown() {
 	z.killCh <- true
 	z.Conn.Close()
+}
+
+func (z *ZkConn) IsZkOk() bool {
+
+	return lastEvent.Ok()
+
 }
 
 func (z *ZkConn) dialExclusive() {
@@ -95,6 +103,7 @@ func (z *ZkConn) monitorEventCh() {
 		select {
 		case ev := <-z.eventCh:
 			logger.Printf("[zkconn %p] eventCh -> %d %s in monitorEventCh", z, ev.State, ev)
+			lastEvent = ev
 			if ev.State == zookeeper.STATE_EXPIRED_SESSION ||
 				ev.State == zookeeper.STATE_CONNECTING {
 				z.dialExclusive()
