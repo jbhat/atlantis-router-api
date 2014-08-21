@@ -1,22 +1,21 @@
 package zk
 
-
 import (
-	"errors"
-	routerzk "atlantis/router/zk"
 	cfg "atlantis/router/config"
+	routerzk "atlantis/router/zk"
+	"errors"
 )
 
-func ListRules() ([]string, error){
-	
+func ListRules() ([]string, error) {
+
 	return routerzk.ListRules(zkConn.Conn)
 }
 
-func GetRule(name string) (cfg.Rule, error){
+func GetRule(name string) (cfg.Rule, error) {
 	if name == "" {
 		return cfg.Rule{}, errors.New("Please specify a name")
 	}
-	
+
 	return routerzk.GetRule(zkConn.Conn, name)
 }
 
@@ -36,7 +35,6 @@ func SetRule(rule cfg.Rule) error {
 
 	return routerzk.SetRule(zkConn.Conn, rule)
 }
-
 
 func DeleteRule(name string) error {
 	if name == "" {

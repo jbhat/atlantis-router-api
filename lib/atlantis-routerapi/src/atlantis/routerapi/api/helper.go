@@ -1,17 +1,14 @@
-
 package api
 
 import (
-	"fmt"
-	"errors"
-	"net/http"
-	"encoding/json"
 	"atlantis/routerapi/auth"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"net/http"
 )
 
-
-
-func GetRequestBody(r *http.Request) ([]byte, error){
+func GetRequestBody(r *http.Request) ([]byte, error) {
 
 	cLen := r.ContentLength
 	var b = make([]byte, cLen)
@@ -20,14 +17,13 @@ func GetRequestBody(r *http.Request) ([]byte, error){
 		if err != nil {
 			return nil, err
 		}
-		
+
 		return nil, errors.New("Could not read full request body")
 	}
 
-	return b,nil
+	return b, nil
 
 }
-
 
 func GetMapFromReqJson(r *http.Request) (map[string]interface{}, error) {
 
@@ -41,30 +37,27 @@ func GetMapFromReqJson(r *http.Request) (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	
-	return v.(map[string]interface{}), nil
-	
 
+	return v.(map[string]interface{}), nil
 
 }
 
-func GetErrorStatusJson(status string, err error) string{
+func GetErrorStatusJson(status string, err error) string {
 
 	return GetStatusJson(fmt.Sprint(status, err))
 }
 
-
 func GetStatusJson(status string) string {
-	
+
 	m := map[string]interface{}{}
 	m["Status"] = status
 	b, err := json.Marshal(m)
-	
+
 	if err != nil {
 		return "{ \"Status\": \"Failed getting status json\" }"
 	}
 
-	return string(b)	
+	return string(b)
 }
 
 func WriteResponse(w http.ResponseWriter, code int, json string) {
@@ -75,7 +68,7 @@ func WriteResponse(w http.ResponseWriter, code int, json string) {
 
 }
 
-func GetUserSecretAndAuth(r *http.Request) error{
+func GetUserSecretAndAuth(r *http.Request) error {
 
 	user := r.Header.Get("User")
 	secret := r.Header.Get("Secret")

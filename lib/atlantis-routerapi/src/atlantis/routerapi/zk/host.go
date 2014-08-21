@@ -1,10 +1,9 @@
 package zk
 
-
 import (
-	"errors"
-	routerzk "atlantis/router/zk"
 	cfg "atlantis/router/config"
+	routerzk "atlantis/router/zk"
+	"errors"
 )
 
 func GetHosts(poolName string) (map[string]cfg.Host, error) {
@@ -36,5 +35,5 @@ func DeleteHosts(poolName string, hosts []string) error {
 		return errors.New("Please specifiy at least one host to delete from the pool")
 	}
 
-	return routerzk.DelHosts(zkConn.Conn, poolName, hosts)	
+	return routerzk.DelHosts(zkConn.Conn, poolName, hosts)
 }

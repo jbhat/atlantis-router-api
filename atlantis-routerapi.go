@@ -1,25 +1,23 @@
 package main
 
-
-import(
-	"github.com/jigish/go-flags"
+import (
 	"atlantis/routerapi/api"
 	"atlantis/routerapi/zk"
-
+	"github.com/jigish/go-flags"
 )
 
 type RouterApi struct {
 	*flags.Parser
-	opts 	*RouterApiOptions
-	APIListenAddress	string
-	ZkServerAddress		string
-	ZkNeedConfig		bool
+	opts             *RouterApiOptions
+	APIListenAddress string
+	ZkServerAddress  string
+	ZkNeedConfig     bool
 }
 
 type RouterApiOptions struct {
-	APIListenAddress	string `short:"A" long:"listen-address" description:"The address for the API to listen on"`
-	ZkServerAddress		string `short:"Z" long:"zk-address" description:"The address of the ZK server"`
-	InitZK			string `short:"I" long:"init-zk" description:"Initialize zk?"`
+	APIListenAddress string `short:"A" long:"listen-address" description:"The address for the API to listen on"`
+	ZkServerAddress  string `short:"Z" long:"zk-address" description:"The address of the ZK server"`
+	InitZK           string `short:"I" long:"init-zk" description:"Initialize zk?"`
 }
 
 func NewRouterApi() *RouterApi {
@@ -34,7 +32,7 @@ func (rapi *RouterApi) setConfig(options RouterApiOptions) {
 	rapi.ZkNeedConfig = (options.InitZK != "")
 
 }
-func (rapi *RouterApi) loadConfig(){
+func (rapi *RouterApi) loadConfig() {
 	rapi.Parse()
 
 	if rapi.opts.APIListenAddress != "" {
@@ -67,4 +65,3 @@ func (rapi *RouterApi) run() {
 	api.Listen()
 
 }
-

@@ -5,14 +5,14 @@ import (
 )
 
 type ListRuleCommand struct {
-	Info		bool	`short:"i" long:"info" description:"Show full info for each rule"`
+	Info bool `short:"i" long:"info" description:"Show full info for each rule"`
 }
 
 func (c *ListRuleCommand) Execute(args []string) error {
 
-	err := Init() 
+	err := Init()
 	if err != nil {
-		ErrorPrint(err)	
+		ErrorPrint(err)
 	}
 
 	statusCode, data, err := BuildAndSendRequest("GET", "/rules", "")
@@ -21,9 +21,9 @@ func (c *ListRuleCommand) Execute(args []string) error {
 	}
 
 	Output(statusCode, data)
-	
+
 	if c.Info && statusCode == 200 {
-		
+
 		err = ExpandAndPrintData("/rules/", "Rules", data)
 		if err != nil {
 			ErrorPrint(err)
@@ -33,7 +33,7 @@ func (c *ListRuleCommand) Execute(args []string) error {
 }
 
 type GetRuleCommand struct {
-	Name		string	`short:"n" long:"name" description:"the name of the rule"`
+	Name string `short:"n" long:"name" description:"the name of the rule"`
 }
 
 func (c *GetRuleCommand) Execute(args []string) error {
@@ -42,12 +42,12 @@ func (c *GetRuleCommand) Execute(args []string) error {
 	if err != nil {
 		ErrorPrint(err)
 	}
-	
+
 	if c.Name == "" {
 		ErrorPrint(errors.New("Please specify a rule name"))
 	}
 
-	statusCode, data, err := BuildAndSendRequest("GET", "rules/" + c.Name, "")
+	statusCode, data, err := BuildAndSendRequest("GET", "rules/"+c.Name, "")
 	if err != nil {
 		ErrorPrint(err)
 	}
@@ -57,12 +57,12 @@ func (c *GetRuleCommand) Execute(args []string) error {
 }
 
 type AddRuleCommand struct {
-	Name            string `short:"n" long:"name" description:"the name of the rule"`
-	Type     	string `short:"t" long:"type" description:"the type of the rule"`
-        Value    	string `short:"v" long:"value" description:"the rule's value"`
-        Next     	string `short:"x" long:"next" description:"the next ruleset"`
-        Pool     	string `short:"p" long:"pool" description:"the pool to point to if this rule succeeds"`
-        Internal        bool   `short:"i" long:"internal" description:"true if internal"`
+	Name     string `short:"n" long:"name" description:"the name of the rule"`
+	Type     string `short:"t" long:"type" description:"the type of the rule"`
+	Value    string `short:"v" long:"value" description:"the rule's value"`
+	Next     string `short:"x" long:"next" description:"the next ruleset"`
+	Pool     string `short:"p" long:"pool" description:"the pool to point to if this rule succeeds"`
+	Internal bool   `short:"i" long:"internal" description:"true if internal"`
 }
 
 func (c *AddRuleCommand) Execute(args []string) error {
@@ -77,7 +77,7 @@ func (c *AddRuleCommand) Execute(args []string) error {
 		ErrorPrint(err)
 	}
 
-	statusCode, data, err := BuildAndSendRequest("PUT", "/rules/" + c.Name, rJson)
+	statusCode, data, err := BuildAndSendRequest("PUT", "/rules/"+c.Name, rJson)
 	if err != nil {
 		ErrorPrint(err)
 	}
@@ -87,21 +87,21 @@ func (c *AddRuleCommand) Execute(args []string) error {
 }
 
 type DeleteRuleCommand struct {
-	Name            string  `short:"n" long:"name" description:"the name of the rule"`
+	Name string `short:"n" long:"name" description:"the name of the rule"`
 }
 
 func (c *DeleteRuleCommand) Execute(args []string) error {
 
 	err := Init()
 	if err != nil {
-		ErrorPrint(err)	
+		ErrorPrint(err)
 	}
 
 	if c.Name == "" {
 		ErrorPrint(errors.New("Please specify a rule name"))
 	}
 
-	statusCode, data, err := BuildAndSendRequest("DELETE", "/rules/" + c.Name, "")
+	statusCode, data, err := BuildAndSendRequest("DELETE", "/rules/"+c.Name, "")
 	if err != nil {
 		ErrorPrint(err)
 	}
@@ -109,5 +109,3 @@ func (c *DeleteRuleCommand) Execute(args []string) error {
 	Output(statusCode, data)
 	return nil
 }
-
-

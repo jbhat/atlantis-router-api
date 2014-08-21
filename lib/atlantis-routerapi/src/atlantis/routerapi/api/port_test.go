@@ -1,28 +1,28 @@
 package api
 
 import (
-	"fmt"
-	"testing"
-	"atlantis/routerapi/client"
+	cfg "atlantis/router/config"
 	"atlantis/routerapi/api"
+	"atlantis/routerapi/client"
 	"atlantis/routerapi/zk"
 	zktest "atlantis/routerapi/zk/testutils"
 	"encoding/json"
-	cfg "atlantis/router/config"
+	"fmt"
+	"testing"
 )
 
 const (
 	DefaultAPIAddr = "8081"
-	DefaultZkPort = 2181
-	DefaultUser = "kwilson"
-	DefaultSecret = "pass"
+	DefaultZkPort  = 2181
+	DefaultUser    = "kwilson"
+	DefaultSecret  = "pass"
 )
 
 func testPort() cfg.Port {
 	return cfg.Port{
-                Port:     9999,
-		Trie:	  "mytrie",
-                Internal: true,
+		Port:     9999,
+		Trie:     "mytrie",
+		Internal: true,
 	}
 }
 
@@ -40,7 +40,7 @@ func testPortData() string {
 
 var zkServer *zktest.ZkTestServer
 
-func TestSetup(t *testing.T){
+func TestSetup(t *testing.T) {
 
 	//create/start zk server
 	zkServer = zktest.NewZkTestServer(DefaultZkPort)
@@ -51,8 +51,8 @@ func TestSetup(t *testing.T){
 	tmpAddr, err := zkServer.Server.Addr()
 	if err != nil {
 		t.Fatalf("Could not get zk server addr")
-	} 
-	//set connection to use one created by server instead of making new one	
+	}
+	//set connection to use one created by server instead of making new one
 	zk.SetZkConn(zkServer.Zk.Conn, zkServer.ZkEventChan, tmpAddr)
 
 	//configure and start the api
@@ -60,14 +60,13 @@ func TestSetup(t *testing.T){
 	if err != nil {
 		t.Fatalf("failed")
 	}
-	
+
 	go api.Listen()
 
-	client.SetDefaults("http://0.0.0.0:" + DefaultAPIAddr, DefaultUser, DefaultSecret)
+	client.SetDefaults("http://0.0.0.0:"+DefaultAPIAddr, DefaultUser, DefaultSecret)
 }
 
-
-func TestGetPort(t *testing.T){
+func TestGetPort(t *testing.T) {
 
 	port := testPort()
 	portData := testPortData()
@@ -81,10 +80,10 @@ func TestGetPort(t *testing.T){
 			t.Fatalf("couldn't clean up")
 		}
 	}()
-	
-	statusCode, data, err := client.BuildAndSendRequest("GET", "/ports/" + fmt.Sprintf("%d", port.Port), "")
+
+	statusCode, data, err := client.BuildAndSendRequest("GET", "/ports/"+fmt.Sprintf("%d", port.Port), "")
 	if err != nil {
-		t.Fatalf("could not get port: %s", err)	
+		t.Fatalf("could not get port: %s", err)
 	}
 
 	if statusCode != 200 {
@@ -97,12 +96,12 @@ func TestGetPort(t *testing.T){
 	}
 }
 
-func TestSetPort(t *testing.T){
+func TestSetPort(t *testing.T) {
 
-	port := testPort() 
+	port := testPort()
 	portData := testPortData()
 
-	statusCode, data, err := client.BuildAndSendRequest("PUT", "/ports/" + fmt.Sprintf("%d", port.Port), portData)
+	statusCode, data, err := client.BuildAndSendRequest("PUT", "/ports/"+fmt.Sprintf("%d", port.Port), portData)
 	if err != nil {
 		t.Fatalf("Failed to send request")
 	}
@@ -118,7 +117,7 @@ func TestSetPort(t *testing.T){
 		}
 	}()
 
-	statusCode, data, err = client.BuildAndSendRequest("GET", "/ports/" + fmt.Sprintf("%d", port.Port), "")
+	statusCode, data, err = client.BuildAndSendRequest("GET", "/ports/"+fmt.Sprintf("%d", port.Port), "")
 	if err != nil {
 		t.Fatalf("failed to send get request for set verification")
 	}
@@ -132,12 +131,12 @@ func TestSetPort(t *testing.T){
 	}
 }
 
-func TestDeletePort(t *testing.T){
+func TestDeletePort(t *testing.T) {
 
 	port := testPort()
 	portData := testPortData()
 
-	statusCode, _, err := client.BuildAndSendRequest("PUT", "/ports/" + fmt.Sprintf("%d", port.Port), portData)
+	statusCode, _, err := client.BuildAndSendRequest("PUT", "/ports/"+fmt.Sprintf("%d", port.Port), portData)
 	if err != nil {
 		t.Fatalf("problem setting port for delete")
 	}
@@ -146,7 +145,7 @@ func TestDeletePort(t *testing.T){
 		t.Fatalf("incorrect set status code")
 	}
 
-	statusCode, _, err = client.BuildAndSendRequest("DELETE", "/ports/" + fmt.Sprintf("%d", port.Port), "")
+	statusCode, _, err = client.BuildAndSendRequest("DELETE", "/ports/"+fmt.Sprintf("%d", port.Port), "")
 	if err != nil {
 		t.Fatalf("Problem sending delete request")
 	}
@@ -155,17 +154,17 @@ func TestDeletePort(t *testing.T){
 		t.Fatalf("incorrect delete status code")
 	}
 
-	statusCode, _, err = client.BuildAndSendRequest("GET", "/ports/" + fmt.Sprintf("%d", port.Port), "")
+	statusCode, _, err = client.BuildAndSendRequest("GET", "/ports/"+fmt.Sprintf("%d", port.Port), "")
 	if err != nil {
 		t.Fatalf("couldn't issue get request to check if port deleted")
 	}
 
 	if statusCode != 404 {
 		t.Fatalf("port not properly deleted: %d", statusCode)
-	}	
+	}
 }
 
-func TestTearDown(t *testing.T){
+func TestTearDown(t *testing.T) {
 
 	zk.KillConnection()
 	if err := zkServer.Destroy(); err != nil {

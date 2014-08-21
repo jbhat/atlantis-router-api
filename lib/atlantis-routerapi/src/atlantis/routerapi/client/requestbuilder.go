@@ -1,23 +1,20 @@
 package client
 
-
 import (
 	"io"
 	"io/ioutil"
-	"strings"
 	"net/http"
-
+	"strings"
 )
 
-
-func BuildRequest(method, uri, data string) (*http.Request, error){
-	var reader io.Reader 
+func BuildRequest(method, uri, data string) (*http.Request, error) {
+	var reader io.Reader
 	if data == "" {
 		reader = nil
 	} else {
 		reader = strings.NewReader(data)
 	}
-	req, err := http.NewRequest(method, APIAddress + uri, reader) 
+	req, err := http.NewRequest(method, APIAddress+uri, reader)
 	if err != nil {
 		return nil, err
 	}
@@ -26,13 +23,13 @@ func BuildRequest(method, uri, data string) (*http.Request, error){
 	req.Header.Add("Secret", Secret)
 	if data != "" {
 		req.Header.Add("Content-Type", "application/json")
-	}	
+	}
 
 	return req, nil
 }
 
 //returns statusCode, the response body, and an optional error
-func BuildAndSendRequest(method, uri, data string) (int, string , error) {
+func BuildAndSendRequest(method, uri, data string) (int, string, error) {
 
 	req, err := BuildRequest(method, uri, data)
 	if err != nil {

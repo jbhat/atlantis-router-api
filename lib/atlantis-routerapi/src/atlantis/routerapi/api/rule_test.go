@@ -1,30 +1,30 @@
 package api
 
 import (
-	"testing"
-	"atlantis/routerapi/client"
+	cfg "atlantis/router/config"
 	"atlantis/routerapi/api"
+	"atlantis/routerapi/client"
 	"atlantis/routerapi/zk"
 	zktest "atlantis/routerapi/zk/testutils"
 	"encoding/json"
-	cfg "atlantis/router/config"
+	"testing"
 )
 
 const (
 	DefaultAPIAddr = "8081"
-	DefaultZkPort = 2181
-	DefaultUser = "kwilson"
-	DefaultSecret = "pass"
+	DefaultZkPort  = 2181
+	DefaultUser    = "kwilson"
+	DefaultSecret  = "pass"
 )
 
 func testRule() cfg.Rule {
 	return cfg.Rule{
-                Name:     "breakable",
-		Type:	  "unenforceable",
-		Value:	  "worthless",
-		Next:	  "nextRule",
-		Pool:	  "pool",
-                Internal: true,
+		Name:     "breakable",
+		Type:     "unenforceable",
+		Value:    "worthless",
+		Next:     "nextRule",
+		Pool:     "pool",
+		Internal: true,
 	}
 }
 
@@ -42,9 +42,9 @@ func testRuleData() string {
 
 var zkServer *zktest.ZkTestServer
 
-func TestSetup(t *testing.T){
+func TestSetup(t *testing.T) {
 
-	//create/start the zkserver 
+	//create/start the zkserver
 	zkServer = zktest.NewZkTestServer(DefaultZkPort)
 	if err := zkServer.Init(); err != nil {
 		t.Fatalf("could not start zk server")
@@ -55,12 +55,10 @@ func TestSetup(t *testing.T){
 		t.Fatalf("could not get server addr")
 	}
 
-	//set conn to use one created by server instead of making a new one 
-	//with zk.Init	
+	//set conn to use one created by server instead of making a new one
+	//with zk.Init
 	zk.SetZkConn(zkServer.Zk.Conn, zkServer.ZkEventChan, tmpAddr)
 
-
-			
 	//configure and start the api
 	err = api.Init(DefaultAPIAddr)
 	if err != nil {
@@ -69,11 +67,10 @@ func TestSetup(t *testing.T){
 
 	go api.Listen()
 
-	client.SetDefaults("http://0.0.0.0:" + DefaultAPIAddr, DefaultUser, DefaultSecret)
+	client.SetDefaults("http://0.0.0.0:"+DefaultAPIAddr, DefaultUser, DefaultSecret)
 }
 
-
-func TestGetRule(t *testing.T){
+func TestGetRule(t *testing.T) {
 
 	rule := testRule()
 	ruleData := testRuleData()
@@ -87,10 +84,10 @@ func TestGetRule(t *testing.T){
 			t.Fatalf("couldn't clean up")
 		}
 	}()
-	
-	statusCode, data, err := client.BuildAndSendRequest("GET", "/rules/" + rule.Name, "")
+
+	statusCode, data, err := client.BuildAndSendRequest("GET", "/rules/"+rule.Name, "")
 	if err != nil {
-		t.Fatalf("could not get rule: %s", err)	
+		t.Fatalf("could not get rule: %s", err)
 	}
 
 	if statusCode != 200 {
@@ -103,12 +100,12 @@ func TestGetRule(t *testing.T){
 	}
 }
 
-func TestSetRule(t *testing.T){
+func TestSetRule(t *testing.T) {
 
-	rule := testRule() 
+	rule := testRule()
 	ruleData := testRuleData()
 
-	statusCode, data, err := client.BuildAndSendRequest("PUT", "/rules/" + rule.Name, ruleData)
+	statusCode, data, err := client.BuildAndSendRequest("PUT", "/rules/"+rule.Name, ruleData)
 	if err != nil {
 		t.Fatalf("Failed to send request")
 	}
@@ -124,7 +121,7 @@ func TestSetRule(t *testing.T){
 		}
 	}()
 
-	statusCode, data, err = client.BuildAndSendRequest("GET", "/rules/" + rule.Name, "")
+	statusCode, data, err = client.BuildAndSendRequest("GET", "/rules/"+rule.Name, "")
 	if err != nil {
 		t.Fatalf("failed to send get request for set verification")
 	}
@@ -138,12 +135,12 @@ func TestSetRule(t *testing.T){
 	}
 }
 
-func TestDeleteRule(t *testing.T){
+func TestDeleteRule(t *testing.T) {
 
 	rule := testRule()
 	ruleData := testRuleData()
 
-	statusCode, _, err := client.BuildAndSendRequest("PUT", "/rules/" + rule.Name, ruleData)
+	statusCode, _, err := client.BuildAndSendRequest("PUT", "/rules/"+rule.Name, ruleData)
 	if err != nil {
 		t.Fatalf("problem setting rule for delete")
 	}
@@ -152,7 +149,7 @@ func TestDeleteRule(t *testing.T){
 		t.Fatalf("incorrect set status code")
 	}
 
-	statusCode, _, err = client.BuildAndSendRequest("DELETE", "/rules/" + rule.Name, "")
+	statusCode, _, err = client.BuildAndSendRequest("DELETE", "/rules/"+rule.Name, "")
 	if err != nil {
 		t.Fatalf("Problem sending delete request")
 	}
@@ -161,20 +158,20 @@ func TestDeleteRule(t *testing.T){
 		t.Fatalf("incorrect delete status code")
 	}
 
-	statusCode, _, err = client.BuildAndSendRequest("GET", "/rules/" + rule.Name, "")
+	statusCode, _, err = client.BuildAndSendRequest("GET", "/rules/"+rule.Name, "")
 	if err != nil {
 		t.Fatalf("couldn't issue get request to check if rule deleted")
 	}
 
 	if statusCode != 404 {
 		t.Fatalf("rule not properly deleted: %d", statusCode)
-	}	
+	}
 }
 
-func TestTearDown(t *testing.T){
+func TestTearDown(t *testing.T) {
 
 	zk.KillConnection()
 	if err := zkServer.Destroy(); err != nil {
 		t.Fatalf("could not destroy zookeeper")
-	}	
+	}
 }

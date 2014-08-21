@@ -1,41 +1,38 @@
 package client
 
-
 import (
-	"errors"
 	cfg "atlantis/router/config"
 	"encoding/json"
+	"errors"
 	"fmt"
 )
-
-
 
 func (c *AddPoolCommand) BuildPool() (cfg.Pool, error) {
 	if c.Name == "" {
 		return cfg.Pool{}, errors.New("Please specify a name for your pool")
 	} else if c.HealthCheckEvery == "" {
-		return cfg.Pool{}, errors.New("Please specify a HealthzCheckEvery for your pool")	
+		return cfg.Pool{}, errors.New("Please specify a HealthzCheckEvery for your pool")
 	} else if c.HealthzTimeout == "" {
 		return cfg.Pool{}, errors.New("Please specify a HealthzTimeout for your pool")
 	} else if c.RequestTimeout == "" {
 		return cfg.Pool{}, errors.New("Please specify a RequestTimeout for your pool")
 	} else if c.Status == "" {
-		return cfg.Pool{}, errors.New("Please specify a Status for your pool")	
+		return cfg.Pool{}, errors.New("Please specify a Status for your pool")
 	} else if len(c.Hosts) == 0 {
 		return cfg.Pool{}, errors.New("Please specify at least one host for your pool")
 	}
-	
-	hMap := make(map[string]cfg.Host, len(c.Hosts)) 
+
+	hMap := make(map[string]cfg.Host, len(c.Hosts))
 	for key, value := range c.Hosts {
-		fmt.Printf("myval: %v : %v\n", key, value) 
-		hMap[value] =	cfg.Host{value} 
+		fmt.Printf("myval: %v : %v\n", key, value)
+		hMap[value] = cfg.Host{value}
 	}
 	return cfg.Pool{c.Name,
-			false,
-			hMap,
-			cfg.PoolConfig{c.HealthCheckEvery, c.HealthzTimeout, 
-					c.RequestTimeout, c.Status}}, nil
-} 
+		false,
+		hMap,
+		cfg.PoolConfig{c.HealthCheckEvery, c.HealthzTimeout,
+			c.RequestTimeout, c.Status}}, nil
+}
 
 func (c *AddPoolCommand) GetPoolJson() (string, error) {
 
@@ -48,8 +45,8 @@ func (c *AddPoolCommand) GetPoolJson() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	
-	return string(b), nil	
+
+	return string(b), nil
 
 }
 
@@ -64,7 +61,7 @@ func (c *AddRuleCommand) BuildRule() (cfg.Rule, error) {
 		return cfg.Rule{}, errors.New("Please specify a pool for your rule")
 	}
 	return cfg.Rule{c.Name, c.Type, c.Value, c.Next, c.Pool, false}, nil
-} 
+}
 
 func (c *AddRuleCommand) GetRuleJson() (string, error) {
 
@@ -78,7 +75,7 @@ func (c *AddRuleCommand) GetRuleJson() (string, error) {
 		return "", err
 	}
 
-	return string(b), nil 
+	return string(b), nil
 }
 
 func (c *AddTrieCommand) BuildTrie() (cfg.Trie, error) {
@@ -88,10 +85,10 @@ func (c *AddTrieCommand) BuildTrie() (cfg.Trie, error) {
 		return cfg.Trie{}, errors.New("Please specify at least one rule for your trie")
 	}
 	return cfg.Trie{c.Name, c.Rules, false}, nil
-} 
+}
 
 func (c *AddTrieCommand) GetTrieJson() (string, error) {
-	
+
 	trie, err := c.BuildTrie()
 	if err != nil {
 		return "", err
@@ -102,7 +99,7 @@ func (c *AddTrieCommand) GetTrieJson() (string, error) {
 		return "", err
 	}
 
-	return string(b), nil 
+	return string(b), nil
 
 }
 
@@ -113,7 +110,7 @@ func (c *AddPortCommand) BuildPort() (cfg.Port, error) {
 		return cfg.Port{}, errors.New("Please specify a root trie for this port")
 	}
 	return cfg.Port{c.Port, c.Trie, false}, nil
-} 
+}
 
 func (c *AddPortCommand) GetPortJson() (string, error) {
 
@@ -130,7 +127,7 @@ func (c *AddPortCommand) GetPortJson() (string, error) {
 	return string(b), nil
 }
 
-func ExpandAndPrintData(uri, jName, jListData string) error{
+func ExpandAndPrintData(uri, jName, jListData string) error {
 
 	var m map[string][]interface{}
 	err := json.Unmarshal([]byte(jListData), &m)
@@ -145,7 +142,7 @@ func ExpandAndPrintData(uri, jName, jListData string) error{
 			return err
 		}
 
-		Output(instatusCode, indata)	
+		Output(instatusCode, indata)
 	}
 	return nil
 }

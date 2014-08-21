@@ -1,9 +1,9 @@
-package	testutils 
+package testutils
 
 import (
-	"os"
-	"log"
 	gozk "launchpad.net/gozk"
+	"log"
+	"os"
 )
 
 type ZkTestServer struct {
@@ -60,10 +60,10 @@ func (z *ZkTestServer) Init() error {
 
 	//build the initial necessary paths
 	log.Println(z.Zk.Conn.Create("/pools", "", 0, gozk.WorldACL(gozk.PERM_ALL)))
-        log.Println(z.Zk.Conn.Create("/ports", "", 0, gozk.WorldACL(gozk.PERM_ALL)))
-        log.Println(z.Zk.Conn.Create("/rules", "", 0, gozk.WorldACL(gozk.PERM_ALL)))
-        log.Println(z.Zk.Conn.Create("/tries", "", 0, gozk.WorldACL(gozk.PERM_ALL)))
-	
+	log.Println(z.Zk.Conn.Create("/ports", "", 0, gozk.WorldACL(gozk.PERM_ALL)))
+	log.Println(z.Zk.Conn.Create("/rules", "", 0, gozk.WorldACL(gozk.PERM_ALL)))
+	log.Println(z.Zk.Conn.Create("/tries", "", 0, gozk.WorldACL(gozk.PERM_ALL)))
+
 	return nil
 }
 

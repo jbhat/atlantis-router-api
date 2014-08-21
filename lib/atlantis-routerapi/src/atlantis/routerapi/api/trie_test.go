@@ -1,31 +1,31 @@
 package api
 
 import (
-	"testing"
-	"atlantis/routerapi/client"
+	cfg "atlantis/router/config"
 	"atlantis/routerapi/api"
+	"atlantis/routerapi/client"
 	"atlantis/routerapi/zk"
 	zktest "atlantis/routerapi/zk/testutils"
 	"encoding/json"
-	cfg "atlantis/router/config"
+	"testing"
 )
 
 const (
 	DefaultAPIAddr = "8081"
-	DefaultZkPort = 2181
-	DefaultUser = "kwilson"
-	DefaultSecret = "pass"
+	DefaultZkPort  = 2181
+	DefaultUser    = "kwilson"
+	DefaultSecret  = "pass"
 )
 
 func testTrie() cfg.Trie {
 	return cfg.Trie{
-                Name:     "breakable",
-		Rules:	  []string{
-				"myRule",
-				"yourRule",
-				"ourRule",
-			  	},
-                Internal: true,
+		Name: "breakable",
+		Rules: []string{
+			"myRule",
+			"yourRule",
+			"ourRule",
+		},
+		Internal: true,
 	}
 }
 
@@ -43,7 +43,7 @@ func testTrieData() string {
 
 var zkServer *zktest.ZkTestServer
 
-func TestSetup(t *testing.T){
+func TestSetup(t *testing.T) {
 
 	//create/start zkserver
 	zkServer = zktest.NewZkTestServer(DefaultZkPort)
@@ -55,12 +55,10 @@ func TestSetup(t *testing.T){
 	if err != nil {
 		t.Fatalf("could not get zk server addr")
 	}
-	
+
 	//set our conn to the one created by testserver instead
 	//of making a new one with zk.Init
 	zk.SetZkConn(zkServer.Zk.Conn, zkServer.ZkEventChan, tmpAddr)
-
-
 
 	//configure and start the api
 	err = api.Init(DefaultAPIAddr)
@@ -70,11 +68,10 @@ func TestSetup(t *testing.T){
 
 	go api.Listen()
 
-	client.SetDefaults("http://0.0.0.0:" + DefaultAPIAddr, DefaultUser, DefaultSecret)
+	client.SetDefaults("http://0.0.0.0:"+DefaultAPIAddr, DefaultUser, DefaultSecret)
 }
 
-
-func TestGetTrie(t *testing.T){
+func TestGetTrie(t *testing.T) {
 
 	trie := testTrie()
 	trieData := testTrieData()
@@ -88,10 +85,10 @@ func TestGetTrie(t *testing.T){
 			t.Fatalf("couldn't clean up")
 		}
 	}()
-	
-	statusCode, data, err := client.BuildAndSendRequest("GET", "/tries/" + trie.Name, "")
+
+	statusCode, data, err := client.BuildAndSendRequest("GET", "/tries/"+trie.Name, "")
 	if err != nil {
-		t.Fatalf("could not get trie: %s", err)	
+		t.Fatalf("could not get trie: %s", err)
 	}
 
 	if statusCode != 200 {
@@ -104,12 +101,12 @@ func TestGetTrie(t *testing.T){
 	}
 }
 
-func TestSetTrie(t *testing.T){
+func TestSetTrie(t *testing.T) {
 
-	trie := testTrie() 
+	trie := testTrie()
 	trieData := testTrieData()
 
-	statusCode, data, err := client.BuildAndSendRequest("PUT", "/tries/" + trie.Name, trieData)
+	statusCode, data, err := client.BuildAndSendRequest("PUT", "/tries/"+trie.Name, trieData)
 	if err != nil {
 		t.Fatalf("Failed to send request")
 	}
@@ -125,7 +122,7 @@ func TestSetTrie(t *testing.T){
 		}
 	}()
 
-	statusCode, data, err = client.BuildAndSendRequest("GET", "/tries/" + trie.Name, "")
+	statusCode, data, err = client.BuildAndSendRequest("GET", "/tries/"+trie.Name, "")
 	if err != nil {
 		t.Fatalf("failed to send get request for set verification")
 	}
@@ -139,12 +136,12 @@ func TestSetTrie(t *testing.T){
 	}
 }
 
-func TestDeleteTrie(t *testing.T){
+func TestDeleteTrie(t *testing.T) {
 
 	trie := testTrie()
 	trieData := testTrieData()
 
-	statusCode, _, err := client.BuildAndSendRequest("PUT", "/tries/" + trie.Name, trieData)
+	statusCode, _, err := client.BuildAndSendRequest("PUT", "/tries/"+trie.Name, trieData)
 	if err != nil {
 		t.Fatalf("problem setting trie for delete")
 	}
@@ -153,7 +150,7 @@ func TestDeleteTrie(t *testing.T){
 		t.Fatalf("incorrect set status code")
 	}
 
-	statusCode, _, err = client.BuildAndSendRequest("DELETE", "/tries/" + trie.Name, "")
+	statusCode, _, err = client.BuildAndSendRequest("DELETE", "/tries/"+trie.Name, "")
 	if err != nil {
 		t.Fatalf("Problem sending delete request")
 	}
@@ -162,17 +159,17 @@ func TestDeleteTrie(t *testing.T){
 		t.Fatalf("incorrect delete status code")
 	}
 
-	statusCode, _, err = client.BuildAndSendRequest("GET", "/tries/" + trie.Name, "")
+	statusCode, _, err = client.BuildAndSendRequest("GET", "/tries/"+trie.Name, "")
 	if err != nil {
 		t.Fatalf("couldn't issue get request to check if trie deleted")
 	}
 
 	if statusCode != 404 {
 		t.Fatalf("trie not properly deleted: %d", statusCode)
-	}	
+	}
 }
 
-func TestTearDown(t *testing.T){
+func TestTearDown(t *testing.T) {
 
 	zk.KillConnection()
 	if err := zkServer.Destroy(); err != nil {

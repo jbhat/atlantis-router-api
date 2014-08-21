@@ -1,18 +1,16 @@
 package client
 
 import (
-	"testing"
-	"strings"
 	"atlantis/routerapi/client"
+	"strings"
+	"testing"
 )
 
 const (
-	DefaultUser = "kwilson"
-	DefaultSecret = "pass"
+	DefaultUser    = "kwilson"
+	DefaultSecret  = "pass"
 	DefaultAPIAddr = "http://0.0.0.0:8081"
-
 )
-
 
 func TestSetup(t *testing.T) {
 
@@ -21,7 +19,7 @@ func TestSetup(t *testing.T) {
 
 }
 
-func TestBuildRequestWithData(t *testing.T){
+func TestBuildRequestWithData(t *testing.T) {
 
 	req, err := client.BuildRequest("GET", "/test", "non-empty")
 	if err != nil {
@@ -40,21 +38,21 @@ func TestBuildRequestWithData(t *testing.T){
 		t.Fatalf("Secret header not set properly")
 	}
 
-	if req.URL.Path !=  "/test" {
+	if req.URL.Path != "/test" {
 		t.Fatalf("Url/uri not built properly")
 	}
 
-	//not equality because req.URL.Host drops http/https	
+	//not equality because req.URL.Host drops http/https
 	if !strings.Contains(DefaultAPIAddr, req.URL.Host) {
 		t.Fatalf("Url not set properly")
 	}
 
 	if req.Method != "GET" {
 		t.Fatalf("Request method not set properly")
-	}	
+	}
 }
 
-func TestBuildRequestNoData(t *testing.T){
+func TestBuildRequestNoData(t *testing.T) {
 
 	req, err := client.BuildRequest("DELETE", "/funtime", "")
 	if err != nil {
@@ -66,16 +64,15 @@ func TestBuildRequestNoData(t *testing.T){
 		t.Fatalf("Content type should not be set for dataless request")
 	}
 
-
 	if req.Method != "DELETE" {
 		t.Fatalf("Request method not set properly")
-	}		
+	}
 
 	if req.URL.Path != "/funtime" {
 		t.Fatalf("Request url/uri not set properly")
-	}	
+	}
 
-	//not equality because req.URL.Host drops the http/https	
+	//not equality because req.URL.Host drops the http/https
 	if !strings.Contains(DefaultAPIAddr, req.URL.Host) {
 		t.Fatalf("Request url not set properly %s : %s", req.URL.Host, DefaultAPIAddr)
 	}

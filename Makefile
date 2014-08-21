@@ -21,16 +21,10 @@ init: clean
 build: init
 	go build -o bin/$(PROJECT_NAME) $(PROJECT_NAME).go
 
-fmt:
-	gofmt -l -w $(PROJECT_NAME).go
-
 allc: buildc
 
 buildc: 
 	go build -o bin/$(PROJ_CLIENT_NAME) $(PROJ_CLIENT_NAME).go
-
-fmtc:	
-	gofmt -l -w $(PROJ_CLIENT_NAME).go
 
 test:
 	@for p in `find $(API_PATH)/src -type f -name "*.go" |sed 's-\./src/\(.*\)/.*-\1-' |sort -u`; do \
@@ -39,3 +33,7 @@ test:
 	done
 	@echo
 	echo "ok."
+fmt:
+	@find $(API_PATH)/src -name \*.go -exec gofmt -l -w {} \;
+	@gofmt -l -w $(PROJ_CLIENT_NAME).go
+	@gofmt -l -w $(PROJECT_NAME).go

@@ -1,24 +1,24 @@
 package api
 
 import (
-	"fmt"
-	"net/http"
-	"encoding/json"
-	"github.com/gorilla/mux"
-	zk "atlantis/routerapi/zk"
 	cfg "atlantis/router/config"
+	zk "atlantis/routerapi/zk"
+	"encoding/json"
+	"fmt"
+	"github.com/gorilla/mux"
+	"net/http"
 )
 
 func GetHosts(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
-	
+
 	err := GetUserSecretAndAuth(r)
 	if err != nil {
 		WriteResponse(w, NotAuthorizedStatusCode, GetErrorStatusJson(NotAuthenticatedStatus, err))
 		return
 	}
-	 
+
 	hostsMap, err := zk.GetHosts(vars["PoolName"])
 	if err != nil {
 		WriteResponse(w, ServerErrorCode, GetErrorStatusJson(CouldNotCompleteOperationStatus, err))
@@ -34,7 +34,6 @@ func GetHosts(w http.ResponseWriter, r *http.Request) {
 	WriteResponse(w, OkStatusCode, string(hMapJson))
 }
 
-
 func AddHosts(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -43,7 +42,7 @@ func AddHosts(w http.ResponseWriter, r *http.Request) {
 		WriteResponse(w, NotAuthorizedStatusCode, GetErrorStatusJson(NotAuthenticatedStatus, err))
 		return
 	}
-		
+
 	if r.Header.Get("Content-Type") != "application/json" {
 		WriteResponse(w, BadRequestStatusCode, GetStatusJson(IncorrectContentTypeStatus))
 		return
@@ -55,10 +54,10 @@ func AddHosts(w http.ResponseWriter, r *http.Request) {
 		WriteResponse(w, BadRequestStatusCode, GetErrorStatusJson(CouldNotReadRequestDataStatus, err))
 		return
 	}
-	err = json.Unmarshal(body, &hostMap)		
+	err = json.Unmarshal(body, &hostMap)
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
-		WriteResponse(w, BadRequestStatusCode, GetErrorStatusJson(CouldNotReadRequestDataStatus, err))	
+		WriteResponse(w, BadRequestStatusCode, GetErrorStatusJson(CouldNotReadRequestDataStatus, err))
 		return
 	}
 
@@ -78,21 +77,21 @@ func DeleteHosts(w http.ResponseWriter, r *http.Request) {
 	err := GetUserSecretAndAuth(r)
 	if err != nil {
 		WriteResponse(w, NotAuthorizedStatusCode, GetErrorStatusJson(NotAuthenticatedStatus, err))
-                return
-	}
-	
-	if r.Header.Get("Content-Type") != "application/json" {
-		WriteResponse(w, BadRequestStatusCode, GetStatusJson(IncorrectContentTypeStatus))
-                return
+		return
 	}
 
-	m, err := GetMapFromReqJson(r) 
+	if r.Header.Get("Content-Type") != "application/json" {
+		WriteResponse(w, BadRequestStatusCode, GetStatusJson(IncorrectContentTypeStatus))
+		return
+	}
+
+	m, err := GetMapFromReqJson(r)
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
 		WriteResponse(w, BadRequestStatusCode, GetErrorStatusJson(CouldNotReadRequestDataStatus, err))
-                return
+		return
 	}
-	
+
 	hList := m["Hosts"]
 	fList := hList.([]interface{})
 	hostList := make([]string, len(fList))
@@ -106,7 +105,6 @@ func DeleteHosts(w http.ResponseWriter, r *http.Request) {
 		WriteResponse(w, ServerErrorCode, GetErrorStatusJson(CouldNotCompleteOperationStatus, err))
 		return
 	}
-	
+
 	WriteResponse(w, OkStatusCode, GetStatusJson(RequestSuccesfulStatus))
 }
-

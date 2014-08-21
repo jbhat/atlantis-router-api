@@ -1,14 +1,13 @@
 package api
 
-
 import (
+	"atlantis/routerapi/auth"
+	"atlantis/routerapi/zk"
 	"fmt"
 	"net/http"
-	"atlantis/routerapi/zk"
-	"atlantis/routerapi/auth"
 )
 
-func Healthz(w http.ResponseWriter, r *http.Request){
+func Healthz(w http.ResponseWriter, r *http.Request) {
 
 	//check zk health
 	zkOk := zk.IsZkConnOk()
@@ -20,7 +19,7 @@ func Healthz(w http.ResponseWriter, r *http.Request){
 		fmt.Fprintf(w, "%s", "CRITICAL")
 	} else {
 
-		w.Header().Add("Server-Status", "OK")	
+		w.Header().Add("Server-Status", "OK")
 		fmt.Fprintf(w, "%s", "OK")
 	}
 

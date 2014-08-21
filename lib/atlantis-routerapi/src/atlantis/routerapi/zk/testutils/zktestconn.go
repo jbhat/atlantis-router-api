@@ -1,10 +1,10 @@
-package	testutils 
+package testutils
 
 import (
-	"log"
 	"errors"
 	"fmt"
 	gozk "launchpad.net/gozk"
+	"log"
 	"time"
 )
 

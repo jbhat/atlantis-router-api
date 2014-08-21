@@ -1,23 +1,22 @@
 package zk
 
-
 import (
-	"log"
 	"launchpad.net/gozk"
+	"log"
 )
 
 var (
-	zkConn	*ZkConn
+	zkConn   *ZkConn
 	LastZkOk = true
 )
 
-func SetZkConn(c *zookeeper.Conn, evc <-chan zookeeper.Event, servers string){
+func SetZkConn(c *zookeeper.Conn, evc <-chan zookeeper.Event, servers string) {
 
 	zkConn = &ZkConn{
 		ResetCh: make(chan bool),
 		servers: servers,
-		killCh: make(chan bool),
-		Conn: c,
+		killCh:  make(chan bool),
+		Conn:    c,
 		eventCh: evc,
 	}
 
@@ -28,8 +27,8 @@ func SetZkConn(c *zookeeper.Conn, evc <-chan zookeeper.Event, servers string){
 
 //This is used only when SetZkConn is used to allow
 //the ZkConn to be closed by whatever created it and still
-//allow the killCh to be signaled 
-func KillConnection(){
+//allow the killCh to be signaled
+func KillConnection() {
 	zkConn.killCh <- true
 }
 
@@ -39,14 +38,14 @@ func Init(zkAddr string, config bool) {
 	if config {
 		SetupZk()
 	}
-	
+
 }
 
-func SetupZk(){
+func SetupZk() {
 
 	for {
 		ev := <-zkConn.ResetCh
-	
+
 		if ev == false {
 			log.Println("not true")
 			continue
@@ -64,7 +63,6 @@ func SetupZk(){
 
 }
 
-
 //To check health of ZK we check what the event status was during the
 //last check and the current check. If they are both false then
 //return critical, otherwise continue. The reason for this is the
@@ -72,26 +70,26 @@ func SetupZk(){
 //ZK could be reconnecting from an expired session when healthz was called.
 //So we say it has to be down for a whole interval of healthz checks.
 func IsZkConnOk() bool {
-	
+
 	if zkConn == nil {
 		return false
 	}
 
 	//if any of the necessary paths are not created
 	if _, err := zkConn.Conn.Exists("/pools"); err != nil {
-		return false	
+		return false
 	}
 
 	if _, err := zkConn.Conn.Exists("/rules"); err != nil {
-		return false	
+		return false
 	}
 
 	if _, err := zkConn.Conn.Exists("/tries"); err != nil {
-		return false	
+		return false
 	}
 
 	if _, err := zkConn.Conn.Exists("/ports"); err != nil {
-		return false	
+		return false
 	}
 
 	//attempt to create/delete a simple test path to be sure ZK is working
@@ -114,5 +112,5 @@ func IsZkConnOk() bool {
 
 	LastZkOk = newOk
 
-	return true	
+	return true
 }

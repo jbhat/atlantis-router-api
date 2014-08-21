@@ -1,19 +1,18 @@
 package zk
 
-
 import (
+	cfg "atlantis/router/config"
+	routerzk "atlantis/router/zk"
 	"errors"
 	"strconv"
-	routerzk "atlantis/router/zk"
-	cfg "atlantis/router/config"
 )
 
-func ListPorts() ([]uint16, error){
-	
+func ListPorts() ([]uint16, error) {
+
 	return routerzk.ListPorts(zkConn.Conn)
 }
 
-func GetPort(name string) (cfg.Port, error){
+func GetPort(name string) (cfg.Port, error) {
 	if name == "" {
 		return cfg.Port{}, errors.New("Please specify a port")
 	}
@@ -22,8 +21,8 @@ func GetPort(name string) (cfg.Port, error){
 
 	if err != nil {
 		return cfg.Port{}, err
-	}	
-	
+	}
+
 	return routerzk.GetPort(zkConn.Conn, uint16(pUint))
 }
 
@@ -31,13 +30,12 @@ func SetPort(port cfg.Port) error {
 
 	if port.Port == 0 {
 		return errors.New("Please specify a port")
-	} else if port.Trie == ""  {
+	} else if port.Trie == "" {
 		return errors.New("Please specify a trie")
 	}
 
 	return routerzk.SetPort(zkConn.Conn, port)
 }
-
 
 func DeletePort(name string) error {
 	if name == "" {
@@ -45,7 +43,7 @@ func DeletePort(name string) error {
 	}
 
 	pUint, err := strconv.ParseUint(name, 10, 16)
-	
+
 	if err != nil {
 		return err
 	}
